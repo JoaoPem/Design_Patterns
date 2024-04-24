@@ -1,78 +1,100 @@
 public class Bridge {
-    interface Iterator {
-        boolean hasNext();
-        Object next();
+    
+    interface DeviceControl {
+        void turnOn();
+        void turnOff();
+        void setChannel(int channel);
     }
-
-    interface Aggregate {
-        Iterator createIterator();
-    }
-
-    class BookIterator implements Iterator {
-        private List<Book> books;
-        private int position;
-
-        public BookIterator(List<Book> books) {
-            this.books = books;
-            this.position = 0;
+    
+    
+    class RemoteControl implements DeviceControl {
+        public void turnOn() {
+            System.out.println("Device turned on using Remote Control.");
         }
-
-        @Override
-        public boolean hasNext() {
-            return position < books.size();
+    
+        public void turnOff() {
+            System.out.println("Device turned off using Remote Control.");
         }
-
-        @Override
-        public Object next() {
-            if (this.hasNext()) {
-                return books.get(position++);
-            }
-            return null;
-        }
-    }
-
-    class BookCollection implements Aggregate {
-        private List<Book> books;
-
-        public BookCollection() {
-            this.books = new ArrayList<>();
-        }
-
-        public void addBook(Book book) {
-            books.add(book);
-        }
-
-        @Override
-        public Iterator createIterator() {
-            return new BookIterator(this.books);
-        }
-    }
-
-    class Book {
-        private String title;
-
-        public Book(String title) {
-            this.title = title;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-    }
-
-    public class Main {
-        public static void main(String[] args) {
-            BookCollection collection = new BookCollection();
-            collection.addBook(new Book("Design Patterns: Elements of Reusable Object-Oriented Software"));
-            collection.addBook(new Book("Clean Code: A Handbook of Agile Software Craftsmanship"));
-            collection.addBook(new Book("Effective Java"));
-
-            Iterator iterator = collection.createIterator();
-            while (iterator.hasNext()) {
-                Book book = (Book) iterator.next();
-                System.out.println("Book: " + book.getTitle());
-            }
+    
+        public void setChannel(int channel) {
+            System.out.println("Set channel to " + channel + " using Remote Control.");
         }
     }
     
+    class VoiceControl implements DeviceControl {
+        public void turnOn() {
+            System.out.println("Device turned on using Voice Control.");
+        }
+    
+        public void turnOff() {
+            System.out.println("Device turned off using Voice Control.");
+        }
+    
+        public void setChannel(int channel) {
+            System.out.println("Set channel to " + channel + " using Voice Control.");
+        }
+    }
+    
+    abstract class Device {
+        protected DeviceControl deviceControl;
+    
+        protected Device(DeviceControl deviceControl) {
+            this.deviceControl = deviceControl;
+        }
+    
+        abstract void turnOn();
+        abstract void turnOff();
+        abstract void changeChannel(int channel);
+    }
+    
+    class Television extends Device {
+        public Television(DeviceControl deviceControl) {
+            super(deviceControl);
+        }
+    
+        void turnOn() {
+            deviceControl.turnOn();
+        }
+    
+        void turnOff() {
+            deviceControl.turnOff();
+        }
+    
+        void changeChannel(int channel) {
+            deviceControl.setChannel(channel);
+        }
+    }
+    
+    class Radio extends Device {
+        public Radio(DeviceControl deviceControl) {
+            super(deviceControl);
+        }
+    
+        void turnOn() {
+            deviceControl.turnOn();
+        }
+    
+        void turnOff() {
+            deviceControl.turnOff();
+        }
+    
+        void changeChannel(int channel) {
+            deviceControl.setChannel(channel);
+        }
+    }
+    
+    public class Main {
+        public static void main(String[] args) {
+            Device tvWithRemote = new Television(new RemoteControl());
+            Device radioWithVoice = new Radio(new VoiceControl());
+    
+            tvWithRemote.turnOn();
+            tvWithRemote.changeChannel(101);
+            tvWithRemote.turnOff();
+    
+            radioWithVoice.turnOn();
+            radioWithVoice.changeChannel(202);
+            radioWithVoice.turnOff();
+        }
+    }
 }
