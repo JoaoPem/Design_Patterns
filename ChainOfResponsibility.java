@@ -1,11 +1,10 @@
 public class ChainOfResponsibility {
-    // Handler
+
     interface Handler {
         void setNextHandler(Handler nextHandler);
         void handleRequest(Message request);
     }
 
-    // Concrete Handlers
     class EmailHandler implements Handler {
         private Handler nextHandler;
 
@@ -46,7 +45,6 @@ public class ChainOfResponsibility {
         }
     }
 
-    // Message and MessageType
     enum MessageType {
         EMAIL, SMS, UNKNOWN
     }
@@ -69,22 +67,18 @@ public class ChainOfResponsibility {
         }
     }
 
-    // Client
     public class Main {
         public static void main(String[] args) {
-            // Create handlers
+
             Handler emailHandler = new EmailHandler();
             Handler smsHandler = new SMSHandler();
 
-            // Chain them
             emailHandler.setNextHandler(smsHandler);
 
-            // Create messages
             Message email = new Message(MessageType.EMAIL, "Hello, this is an email!");
             Message sms = new Message(MessageType.SMS, "Hello, this is an SMS!");
             Message unknown = new Message(MessageType.UNKNOWN, "Unknown message type");
 
-            // Process messages
             emailHandler.handleRequest(email);
             emailHandler.handleRequest(sms);
             emailHandler.handleRequest(unknown);
