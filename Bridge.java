@@ -1,78 +1,104 @@
 public class Bridge {
-    interface Device {
-        void powerOn();
-        void powerOff();
+    // Implementor
+    interface DeviceControl {
+        void turnOn();
+        void turnOff();
         void setChannel(int channel);
     }
 
-    class TV implements Device {
-        public void powerOn() {
-            System.out.println("TV turned on.");
+    // ConcreteImplementors
+    class RemoteControl implements DeviceControl {
+        public void turnOn() {
+            System.out.println("Device turned on using Remote Control.");
         }
 
-        public void powerOff() {
-            System.out.println("TV turned off.");
-        }
-
-        public void setChannel(int channel) {
-            System.out.println("TV channel set to " + channel);
-        }
-    }
-
-    class DVDPlayer implements Device {
-        public void powerOn() {
-            System.out.println("DVD Player turned on.");
-        }
-
-        public void powerOff() {
-            System.out.println("DVD Player turned off.");
+        public void turnOff() {
+            System.out.println("Device turned off using Remote Control.");
         }
 
         public void setChannel(int channel) {
-            // Typically DVD Players don't have channels but for simplicity, let's assume this one does.
-            System.out.println("DVD channel set to " + channel);
+            System.out.println("Set channel to " + channel + " using Remote Control.");
         }
     }
 
-    abstract class RemoteControl {
-        protected Device device;
-
-        protected RemoteControl(Device device) {
-            this.device = device;
+    class VoiceControl implements DeviceControl {
+        public void turnOn() {
+            System.out.println("Device turned on using Voice Control.");
         }
 
-        abstract void togglePower();
+        public void turnOff() {
+            System.out.println("Device turned off using Voice Control.");
+        }
+
+        public void setChannel(int channel) {
+            System.out.println("Set channel to " + channel + " using Voice Control.");
+        }
+    }
+
+    // Abstraction
+    abstract class Device {
+        protected DeviceControl deviceControl;
+
+        protected Device(DeviceControl deviceControl) {
+            this.deviceControl = deviceControl;
+        }
+
+        abstract void turnOn();
+        abstract void turnOff();
         abstract void changeChannel(int channel);
     }
 
-    class SimpleRemote extends RemoteControl {
-        public SimpleRemote(Device device) {
-            super(device);
+    // RefinedAbstraction
+    class Television extends Device {
+        public Television(DeviceControl deviceControl) {
+            super(deviceControl);
         }
 
-        public void togglePower() {
-            System.out.println("Toggling power...");
-            device.powerOn();
-            device.powerOff();
+        void turnOn() {
+            deviceControl.turnOn();
         }
 
-        public void changeChannel(int channel) {
-            device.setChannel(channel);
+        void turnOff() {
+            deviceControl.turnOff();
+        }
+
+        void changeChannel(int channel) {
+            deviceControl.setChannel(channel);
         }
     }
 
+    class Radio extends Device {
+        public Radio(DeviceControl deviceControl) {
+            super(deviceControl);
+        }
+
+        void turnOn() {
+            deviceControl.turnOn();
+        }
+
+        void turnOff() {
+            deviceControl.turnOff();
+        }
+
+        void changeChannel(int channel) {
+            deviceControl.setChannel(channel);
+        }
+    }
+
+    // Client
     public class Main {
         public static void main(String[] args) {
-            Device tv = new TV();
-            Device dvd = new DVDPlayer();
-            RemoteControl remoteForTV = new SimpleRemote(tv);
-            RemoteControl remoteForDVD = new SimpleRemote(dvd);
+            Device tvWithRemote = new Television(new RemoteControl());
+            Device radioWithVoice = new Radio(new VoiceControl());
 
-            remoteForTV.togglePower();
-            remoteForTV.changeChannel(5);
+            tvWithRemote.turnOn();
+            tvWithRemote.changeChannel(101);
+            tvWithRemote.turnOff();
 
-            remoteForDVD.togglePower();
-            remoteForDVD.changeChannel(2);
+            radioWithVoice.turnOn();
+            radioWithVoice.changeChannel(202);
+            radioWithVoice.turnOff();
         }
     }
+
 }
