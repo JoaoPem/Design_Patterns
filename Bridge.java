@@ -1,12 +1,10 @@
 public class Bridge {
-    // Implementor
     interface DeviceControl {
         void turnOn();
         void turnOff();
         void setChannel(int channel);
     }
 
-    // ConcreteImplementors
     class RemoteControl implements DeviceControl {
         public void turnOn() {
             System.out.println("Device turned on using Remote Control.");
@@ -35,7 +33,6 @@ public class Bridge {
         }
     }
 
-    // Abstraction
     abstract class Device {
         protected DeviceControl deviceControl;
 
@@ -48,7 +45,6 @@ public class Bridge {
         abstract void changeChannel(int channel);
     }
 
-    // RefinedAbstraction
     class Television extends Device {
         public Television(DeviceControl deviceControl) {
             super(deviceControl);
@@ -85,7 +81,6 @@ public class Bridge {
         }
     }
 
-    // Client
     public class Main {
         public static void main(String[] args) {
             Device tvWithRemote = new Television(new RemoteControl());
