@@ -52,20 +52,16 @@ public class Command {
         }
     }
 
-    // Cliente
     public class Main {
         public static void main(String[] args) {
-            // Criando o Receptor
+
             Luz luz = new Luz();
 
-            // Criando os Comandos Concretos
             ComandoLigarLuz ligarLuzComando = new ComandoLigarLuz(luz);
             ComandoDesligarLuz desligarLuzComando = new ComandoDesligarLuz(luz);
 
-            // Criando o Invocador (Controle Remoto)
             ControleRemoto controleRemoto = new ControleRemoto();
 
-            // Configurando os comandos no controle remoto
             controleRemoto.setComando(ligarLuzComando); // Ligando a luz
             controleRemoto.pressionarBotao(); // Pressionando o botão para ligar a luz
 
