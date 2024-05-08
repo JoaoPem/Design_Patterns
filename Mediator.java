@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mediatorr {
+public class Mediator {
     interface Mediator {
         void send(String message, Colleague colleague);
     }
