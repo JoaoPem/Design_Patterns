@@ -1,72 +1,88 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Observerr{
-    interface Observer {
-        void update(String message);
-    }
-    
-    interface Subject {
-        void registerObserver(Observer observer);
-        void removeObserver(Observer observer);
-        void notifyObservers();
+public class Mediatorr {
+    interface Mediator {
+        void send(String message, Colleague colleague);
     }
 
-    class Newspaper implements Subject {
-        private List<Observer> observers;
-        private String latestEdition;
+    // Classe Colleague abstrata
+    abstract class Colleague {
+        protected Mediator mediator;
 
-        public Newspaper() {
-            observers = new ArrayList<>();
+        public Colleague(Mediator mediator) {
+            this.mediator = mediator;
+        }
+
+        public abstract void send(String message);
+        public abstract void receive(String message);
+    }
+
+    class Button extends Colleague {
+        public Button(Mediator mediator) {
+            super(mediator);
         }
 
         @Override
-        public void registerObserver(Observer observer) {
-            observers.add(observer);
+        public void send(String message) {
+            mediator.send(message, this);
         }
 
         @Override
-        public void removeObserver(Observer observer) {
-            observers.remove(observer);
+        public void receive(String message) {
+            System.out.println("Button received: " + message);
+        }
+    }
+
+    class TextBox extends Colleague {
+        public TextBox(Mediator mediator) {
+            super(mediator);
         }
 
         @Override
-        public void notifyObservers() {
-            for (Observer observer : observers) {
-                observer.update(latestEdition);
+        public void send(String message) {
+            mediator.send(message, this);
+        }
+
+        @Override
+        public void receive(String message) {
+            System.out.println("TextBox received: " + message);
+        }
+    }
+
+    class ConcreteMediator implements Mediator {
+        private List<Colleague> colleagues;
+
+        public ConcreteMediator() {
+            this.colleagues = new ArrayList<>();
+        }
+
+        public void addColleague(Colleague colleague) {
+            colleagues.add(colleague);
+        }
+
+        @Override
+        public void send(String message, Colleague colleague) {
+            for (Colleague col : colleagues) {
+                if (col != colleague) {
+                    col.receive(message);
+                }
             }
         }
-
-        public void newEdition(String edition) {
-            this.latestEdition = edition;
-            notifyObservers();
-        }
     }
 
-    class Subscriber implements Observer {
-        private String name;
-
-        public Subscriber(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public void update(String message) {
-            System.out.println(name + " received a new edition of the newspaper: " + message);
-        }
-    }
-
-    public class ObserverPatternDemo {
+    public class MediatorMain {
         public static void main(String[] args) {
-            Newspaper newspaper = new Newspaper();
-            Subscriber sub1 = new Subscriber("Alice");
-            Subscriber sub2 = new Subscriber("Bob");
+            Mediator mediator = new ConcreteMediator();
 
-            newspaper.registerObserver(sub1);
-            newspaper.registerObserver(sub2);
+            Button button = new Button(mediator);
+            TextBox textBox = new TextBox(mediator);
 
-            newspaper.newEdition("Edition 1: Observer Pattern Explained");
-            newspaper.newEdition("Edition 2: More Design Patterns");
+            ((ConcreteMediator) mediator).addColleague(button);
+            ((ConcreteMediator) mediator).addColleague(textBox);
+
+            button.send("Clicked");
+            textBox.send("Hello");
         }
     }
 }
