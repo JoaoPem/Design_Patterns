@@ -71,7 +71,7 @@ public class Decorator {
         }
     }
 
-    public class DecoratorPatternDemo {
+    public class DecoratorMain {
         public static void main(String[] args) {
             Beverage beverage = new Coffee();
             System.out.println(beverage.getDescription() + " $" + beverage.cost());
